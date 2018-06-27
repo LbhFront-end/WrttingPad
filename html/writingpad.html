@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2018年海印股份有限公司签到系统</title>
+    <link href="../css/bootstrap.css" rel="stylesheet" />
+    <link href="../css/main.css" rel="stylesheet" />
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jq-signature.js"></script>
+</head>
+
+<body>
+    <div class="main flex-col flex-x-center flex-y-center">
+        <div class="paint flex-col flex-x-center flex-y-center">
+            <canvas id="canvasEl">
+                您的浏览器不支持canvas标签，请您更换浏览器！！
+            </canvas>
+        </div>
+        <div class="js-signature" data-width="700" data-height="700" data-border="1px solid rgba(0,0,0,0)" data-line-width="4" data-background="#fff"
+            data-line-color="#000" data-auto-fit="true">
+        </div>
+        <div class="tip flex-col flex-x-center flex-y-center">
+            <div class="row flex-col flex-x-center flex-y-center">
+                <p class="row flex-col flex-x-center flex-y-center">签名-确定-扫码-贺卡发至个人手机</p>
+            </div>
+            <div class="button flex-row flex-x-center flex-y-center">
+                <button type="button" id="myStart">开始</button>
+                <button type="button" id="myEmpty">清空</button>
+                <button type="button" id="mySave">确定</button>
+            </div>
+        </div>
+        <div id="signature" class="canvasImg"></div>
+        <div  style="opacity:0;">
+            <canvas id="canvasHide"></canvas>
+        </div>
+        <div id="hideImgBg" style="opacity:0;"></div>
+    </div>
+</body>
+
+</html>
+<script>
+    $(document).ready(function () {
+        setCanvasCss();
+        window.onresize = function () {
+            setCanvasCss();
+            setImg();
+        }
+        //设置css
+        function setCanvasCss() {
+            //获取当前屏幕大小
+            var win = $(window);
+            var height = win.height();
+            var width = win.width();
+            var canvasSreen = document.getElementById("canvasEl");
+            var main = $("#canvasEl");
+            canvasSreen.width = width;
+            canvasSreen.height = height;
+            //给canvas设置宽跟高
+            main.css("height", height);
+            main.css("width", width);
+        }
+        // 渲染看到的背景
+        function setImg() {
+            //获取当前屏幕大小
+            var win = $(window);
+            var height = win.height();
+            var width = win.width();
+            var canvasSreen = document.getElementById("canvasEl");
+            var ctx = canvasSreen.getContext("2d");
+            var img = new Image();
+            img.src = '../img/bg.png';
+            img.crossOrigin = "anonymous";
+            ctx.drawImage(img, 0, 0, width, height);
+            var dataImgURL = canvasSreen.toDataURL();
+            var imgBg = $('<img>').attr('src', dataImgURL);
+            imgBg.crossOrigin = "anonymous";
+            $('#hideImgBg').append(img);
+            console.log(dataImgURL);
+        }
+        // 渲染看不到的背景
+        function setHideImg() {
+            //获取当前屏幕大小
+            var win = $(window);
+            var height = win.height();
+            var width = win.width();
+            var canvasSreenHide = document.getElementById("canvasHide");
+            var ctx = canvasSreenHide.getContext("2d");
+            var imgHide = new Image();
+            imgHide.src = '../img/bg.png';
+            imgHide.crossOrigin = "anonymous";
+            ctx.drawImage(imgHide, 0, 0, width, height);
+            var dataImgURL = canvasSreenHide.toDataURL();
+            var imgBg = $('<img>').attr('src', dataImgURL);
+            imgBg.crossOrigin = "anonymous";
+            $('#hideImgBg').append(imgBg);
+            console.log(dataImgURL);
+        }
+        var signUp = $('.js-signature');
+        var signUpImg = $('.canvasImg');
+        //初始化
+        signUp.jqSignature();
+        signUp.css("display", "none");
+        //清除画板
+        $("#myEmpty").on("click", function () {
+            signUp.jqSignature('clearCanvas');
+            signUpImg.empty();
+        })
+        //保存图片
+        $("#mySave").on("click", function () {
+            setHideImg();
+            signUp.css("display", "none");
+            $('#signature').empty();
+            var dataUrl = signUp.jqSignature('getDataURL');
+            var img = $('<img>').attr('src', dataUrl);
+            console.log(dataUrl);
+            $('#signature').append(img);
+        })
+        $("#myStart").on("click", function () {
+            signUp.css("display", "block");
+        })
+        signUp.on('jq.signature.changed', function () {
+            signUp.css("display", "block");
+        });
+    });
+    //预加载渲染背景
+    window.onload = function () {
+        //获取当前屏幕大小
+        var win = $(window);
+        var height = win.height();
+        var width = win.width();
+        var canvasSreen = document.getElementById("canvasEl");
+        var ctx = canvasSreen.getContext("2d");
+        var img = new Image();
+        img.src = '../img/bg.png';
+        img.crossOrigin = "anonymous";        
+        ctx.drawImage(img, 0, 0, width, height);
+    };
+</script>
